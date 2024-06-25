@@ -112,6 +112,11 @@ th {
   font-weight: bold;
 }
 
+tr{
+  user-select: none;
+  cursor: pointer;
+}
+
 tr:nth-child(even) {
   background-color: #004f5b;
 }

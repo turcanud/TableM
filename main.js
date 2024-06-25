@@ -220,7 +220,7 @@ register.onclick = async function (e) {
     database.push({
         id, firstName, lastName, email, phone,
         "address": { streetAddress, city, state, zip },
-        description
+        description, index: database.length
     })
 
     const row = `
