@@ -3,6 +3,7 @@ let database = [];
 let mockDb = [];
 
 const tbody = document.querySelector('.table-container tbody');
+const tableNavigation = document.querySelector('.table-navigation');
 
 async function fetchData(url) {
     const data = await fetch(url)
@@ -10,6 +11,15 @@ async function fetchData(url) {
         .then(data => data)
         .catch(error => console.error('Error fetching data:', error));
     return data;
+}
+
+async function tableNav() {
+    const pages = Math.ceil(database.length / 50);
+    console.log(pages);
+    for (let i = 0; i < pages; i++) {
+        const navBtn = `<button type="button" class="nav-btn">${i + 1}</button>`;
+        tableNavigation.innerHTML += navBtn;
+    }
 }
 
 const loader = document.querySelector('.loader');
@@ -25,6 +35,7 @@ document.querySelector('#data-set-size-selector').addEventListener('change', asy
     const url_small = 'http://www.filltext.com/?rows=32&id=%7Bnumber%7C1000%7D&firstName=%7BfirstName%7D&lastName=%7BlastName%7D&email=%7Bemail%7D&phone=%7Bphone%7C(xxx)xxx-xx-xx%7D&address=%7BaddressObject%7D&description=%7Blorem%7C32%7D';
     const url_large = 'http://www.filltext.com/?rows=1000&id=%7Bnumber%7C1000%7D&firstName=%7BfirstName%7D&delay=3&lastName=%7BlastName%7D&email=%7Bemail%7D&phone=%7Bphone%7C(xxx)xxx-xx-xx%7D&address=%7BaddressObject%7D&description=%7Blorem%7C32%7D';
     if (this.value == "large") {
+        tableNavigation.innerHTML = '';
         tbody.innerHTML = '';
         await startLoading();
         database = await fetchData(url_large);
@@ -34,8 +45,9 @@ document.querySelector('#data-set-size-selector').addEventListener('change', asy
         mockDb = [...database];
         await endLoading();
         await populateTable(database);
-        await tableSize();
+        await tableNav();
     } else {
+        tableNavigation.innerHTML = '';
         tbody.innerHTML = '';
         await startLoading();
         database = await fetchData(url_small);
@@ -45,7 +57,7 @@ document.querySelector('#data-set-size-selector').addEventListener('change', asy
         mockDb = [...database];
         await endLoading();
         await populateTable(database);
-        await tableSize();
+        await tableNav();
     }
 });
 
@@ -57,7 +69,7 @@ document.querySelector('#data-set-size-selector').addEventListener('change', asy
     }
     await endLoading();
     await populateTable(database);
-    await tableSize();
+    await tableNav();
 })();
 
 async function populateTable(data) {
