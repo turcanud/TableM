@@ -236,14 +236,14 @@ register.onclick = async function (e) {
     modal.style.display = "none";
 }
 
-// const searchBox = document.querySelector('#search-box');
-// const findBtn = document.querySelector('.search-box-container button');
+const searchBox = document.querySelector('#search-box');
+const findBtn = document.querySelector('.search-box-container button');
 
-// findBtn.addEventListener('click', async function () {
-//     const db = database.filter(function (data) {
-//         const dataString = `${data.id} ${data.firstName} ${data.lastName} ${data.phone} ${data.email} ${data.address.state} ${data.address.streetAddress}`;
-//         return dataString.toLowerCase().includes(searchBox.value);
-//     });
-//     console.table(db);
-//     await populateTable(db);
-// })
+findBtn.addEventListener('click', async function () {
+    const db = database.filter(function (data) {
+        const dataString = `${data.id} ${data.firstName} ${data.lastName} ${data.phone} ${data.email} ${data.address.state} ${data.address.streetAddress}`;
+        const str = dataString.toLowerCase();
+        return str.includes(searchBox.value);
+    });
+    await populateTable(db);
+})
