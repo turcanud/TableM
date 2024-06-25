@@ -104,7 +104,7 @@ async function sortByID(header) {
     } else {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "−";
-        await populateTable(mockDb);
+        await populateTable(mockDb.length > 0 ? mockDb : database);
     }
 }
 
@@ -126,7 +126,7 @@ async function sortByString(header, field) {
     else {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "−";
-        await populateTable(mockDb);
+        await populateTable(mockDb.length > 0 ? mockDb : database);
     }
 }
 
@@ -148,7 +148,7 @@ async function sortByAddress(header) {
     else {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "−";
-        await populateTable(mockDb);
+        await populateTable(mockDb.length > 0 ? mockDb : database);
     }
 }
 
@@ -245,7 +245,7 @@ searchBox.addEventListener('change', async function () {
     const db = database.filter(function (data) {
         const dataString = `${data.id} ${data.firstName} ${data.lastName} ${data.phone} ${data.email} ${data.address.state} ${data.address.streetAddress}`;
         const str = dataString.toLowerCase();
-        return str.includes(searchBox.value);
+        return str.includes(searchBox.value.toLowerCase());
     });
     mockDb = [...db];
     await populateTable(db);
