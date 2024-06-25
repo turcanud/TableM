@@ -241,6 +241,7 @@ const searchBox = document.querySelector('#search-box');
 let mockDb = [];
 
 searchBox.addEventListener('change', async function () {
+    await clearHeaderSigns();
     const db = database.filter(function (data) {
         const dataString = `${data.id} ${data.firstName} ${data.lastName} ${data.phone} ${data.email} ${data.address.state} ${data.address.streetAddress}`;
         const str = dataString.toLowerCase();
