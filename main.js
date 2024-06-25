@@ -90,7 +90,7 @@ async function displayInfo(row) {
 }
 
 async function sortByID(header) {
-    const db = [...database];
+    const db = mockDb.length > 0 ? [...mockDb] : [...database];
     if (header.textContent.includes("−")) {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "⇓";
@@ -104,12 +104,12 @@ async function sortByID(header) {
     } else {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "−";
-        await populateTable(database);
+        await populateTable(mockDb);
     }
 }
 
 async function sortByString(header, field) {
-    const db = [...database];
+    const db = mockDb.length > 0 ? [...mockDb] : [...database];
 
     if (header.textContent.includes("−")) {
         await clearHeaderSigns();
@@ -126,12 +126,12 @@ async function sortByString(header, field) {
     else {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "−";
-        await populateTable(database);
+        await populateTable(mockDb);
     }
 }
 
 async function sortByAddress(header) {
-    const db = [...database];
+    const db = mockDb.length > 0 ? [...mockDb] : [...database];
 
     if (header.textContent.includes("−")) {
         await clearHeaderSigns();
@@ -148,7 +148,7 @@ async function sortByAddress(header) {
     else {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "−";
-        await populateTable(database);
+        await populateTable(mockDb);
     }
 }
 
@@ -237,13 +237,15 @@ register.onclick = async function (e) {
 }
 
 const searchBox = document.querySelector('#search-box');
-const findBtn = document.querySelector('.search-box-container button');
 
-findBtn.addEventListener('click', async function () {
+let mockDb = [];
+
+searchBox.addEventListener('change', async function () {
     const db = database.filter(function (data) {
         const dataString = `${data.id} ${data.firstName} ${data.lastName} ${data.phone} ${data.email} ${data.address.state} ${data.address.streetAddress}`;
         const str = dataString.toLowerCase();
         return str.includes(searchBox.value);
     });
+    mockDb = [...db];
     await populateTable(db);
 })
