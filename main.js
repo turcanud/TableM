@@ -1,5 +1,7 @@
 // script.js
 let database = [];
+let mockDb = [];
+
 const tbody = document.querySelector('.table-container tbody');
 
 async function fetchData(url) {
@@ -26,14 +28,24 @@ document.querySelector('#data-set-size-selector').addEventListener('change', asy
         tbody.innerHTML = '';
         await startLoading();
         database = await fetchData(url_large);
+        for (let i = 0; i < database.length; i++) {
+            database[i].index = i;
+        }
+        mockDb = [...database];
         await endLoading();
         await populateTable(database);
+        await tableSize();
     } else {
         tbody.innerHTML = '';
         await startLoading();
         database = await fetchData(url_small);
+        for (let i = 0; i < database.length; i++) {
+            database[i].index = i;
+        }
+        mockDb = [...database];
         await endLoading();
         await populateTable(database);
+        await tableSize();
     }
 });
 
@@ -45,6 +57,7 @@ document.querySelector('#data-set-size-selector').addEventListener('change', asy
     }
     await endLoading();
     await populateTable(database);
+    await tableSize();
 })();
 
 async function populateTable(data) {
@@ -240,8 +253,6 @@ register.onclick = async function (e) {
 }
 
 const searchBox = document.querySelector('#search-box');
-
-let mockDb = [];
 
 searchBox.addEventListener('change', async function () {
     await clearHeaderSigns();
