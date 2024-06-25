@@ -40,6 +40,9 @@ document.querySelector('#data-set-size-selector').addEventListener('change', asy
 (async () => {
     await startLoading();
     database = await fetchData('http://www.filltext.com/?rows=32&id=%7Bnumber%7C1000%7D&firstName=%7BfirstName%7D&lastName=%7BlastName%7D&email=%7Bemail%7D&phone=%7Bphone%7C(xxx)xxx-xx-xx%7D&address=%7BaddressObject%7D&description=%7Blorem%7C32%7D');
+    for (let i = 0; i < database.length; i++) {
+        database[i].index = i;
+    }
     await endLoading();
     await populateTable(database);
 })();
@@ -49,7 +52,7 @@ async function populateTable(data) {
     for (let i = 0; i < data.length; i++) {
         const row = `
         <tr ondblclick = "displayInfo(this)">
-            <td>${i}</td>
+            <td>${data[i].index}</td>
             <td>${data[i].id}</td>
             <td>${data[i].firstName}</td>
             <td>${data[i].lastName}</td>
