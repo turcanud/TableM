@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>App</title>
+    <link rel="stylesheet" href="custom.css" />
+    <script defer src="main.js"></script>
+  </head>
+  <body>
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+          <span class="close">&times;</span>
+          <form>
+            <label for="firstName">First Name</label>
+            <input type="text" name="firstName" id="firstName" required value="turcanu">
+            <label for="lastName">Last Name</label>
+            <input type="text" name="lastName" id="lastName" required value="turcanu">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" required value="turcanu@gmail.com">
+            <label for="phone">Phone</label>
+            <input type="text" name="phone" id="phone" required value="0374274332">
+            <label for="streetAddress">Street Address</label>
+            <input type="text" name="streetAddress" id="streetAddress" required value="23 calea iesilor">
+            <label for="city">City</label>
+            <input type="text" name="city" id="city" required value="Chisinau">
+            <label for="state">State</label>
+            <input type="text" name="state" id="state" required value="CH">
+            <label for="zip">Zip</label>
+            <input type="text" name="zip" id="zip" required value="2069">
+            <label for="description">Description</label>
+            <input type="text" name="description" id="description" required value="heloooo">
+            <button type="submit" class="btn">Register</button>
+          </form>
+      </div>
+  </div>
+    <l-helix size="200" speed="3" color="white" class="loader hidden"></l-helix>
+    <div class="options">
+      <div class="rows-per-page">
+        <span>Rows per page</span>
+        <select
+          name="rows-per-page-selector"
+          id="rows-per-page-selector"
+          class="selector">
+          <option value="25">25</option>
+          <option selected value="50">50</option>
+        </select>
+      </div>
+      <div class="data-set-size">
+        <span>Data set size</span>
+        <select
+          name="data-set-size-selector"
+          id="data-set-size-selector"
+          class="selector">
+          <option selected value="small">Small</option>
+          <option value="large">Large</option>
+        </select>
+      </div>
+      <button type="button" class="btn">Add</button>
+    </div>
+    <div class="search-box-container">
+      <label for="search">Search</label>
+      <input type="text" name="search" id="search-box"/>
+      <button type="button" class="btn">Find</button>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th># &#x2212;</th>
+            <th onclick="sortByID(this)">Id &#x2212;</th>
+            <th onclick="sortByString(this, 'firstName')">First Name &#x2212;</th>
+            <th onclick="sortByString(this, 'lastName')">Last Name &#x2212;</th>
+            <th onclick="sortByString(this, 'phone')">Phone &#x2212;</th>
+            <th onclick="sortByString(this, 'email')">Email &#x2212;</th>
+            <th onclick="sortByAddress(this)">Address &#x2212;</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="table-navigation">
+      <button type="button" class="nav-btn"><</button>
+      <button type="button" class="nav-btn">1</button>
+      <button type="button" class="nav-btn">></button>
+    </div>
+    <div class="user-selected-info"></div>
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/helix.js"></script>
+  </body>
+</html>
