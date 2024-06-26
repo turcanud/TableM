@@ -13,9 +13,9 @@ async function fetchData(url) {
     return data;
 }
 
-async function tableNav() {
-    const pages = Math.ceil(database.length / 50);
-    console.log(pages);
+async function tableNav(size = 25) {
+    tableNavigation.innerHTML = '';
+    const pages = Math.ceil(database.length / size);
     for (let i = 0; i < pages; i++) {
         const navBtn = `<button type="button" class="nav-btn">${i + 1}</button>`;
         tableNavigation.innerHTML += navBtn;
@@ -72,9 +72,10 @@ document.querySelector('#data-set-size-selector').addEventListener('change', asy
     await tableNav();
 })();
 
-async function populateTable(data) {
+async function populateTable(data, idx = 0, limit = 25) {
     let tableRows = '';
-    for (let i = 0; i < data.length; i++) {
+    if (limit > data.length) limit = data.length;
+    for (let i = idx; i < limit; i++) {
         const row = `
         <tr ondblclick = "displayInfo(this)">
             <td>${data[i].index}</td>
@@ -90,6 +91,11 @@ async function populateTable(data) {
     }
     tbody.innerHTML = tableRows;
 }
+
+document.querySelector('.options select').addEventListener('change', async function () {
+    await populateTable(database, 0, parseInt(this.value));
+    await tableNav(parseInt(this.value));
+});
 
 
 
