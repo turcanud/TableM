@@ -1,9 +1,11 @@
 // script.js
 let database = [];
 let mockDb = [];
+let mockDbForSort = [];
 
 const tbody = document.querySelector('.table-container tbody');
 const tableNavigation = document.querySelector('.table-navigation');
+const searchBox = document.querySelector('#search-box');
 
 async function fetchData(url) {
     const data = await fetch(url)
@@ -37,6 +39,9 @@ document.querySelector('#data-set-size-selector').addEventListener('change', asy
     const url_small = 'http://www.filltext.com/?rows=32&id=%7Bnumber%7C1000%7D&firstName=%7BfirstName%7D&lastName=%7BlastName%7D&email=%7Bemail%7D&phone=%7Bphone%7C(xxx)xxx-xx-xx%7D&address=%7BaddressObject%7D&description=%7Blorem%7C32%7D';
     const url_large = 'http://www.filltext.com/?rows=1000&id=%7Bnumber%7C1000%7D&firstName=%7BfirstName%7D&lastName=%7BlastName%7D&email=%7Bemail%7D&phone=%7Bphone%7C(xxx)xxx-xx-xx%7D&address=%7BaddressObject%7D&description=%7Blorem%7C32%7D';
     if (this.value == "large") {
+        await clearHeaderSigns();
+        mockDbForSort = [];
+        searchBox.value = '';
         tableNavigation.innerHTML = '';
         tbody.innerHTML = '';
         await startLoading();
@@ -49,6 +54,9 @@ document.querySelector('#data-set-size-selector').addEventListener('change', asy
         await populateTable(database, 0, parseInt(document.querySelector('.options select').value));
         await tableNav(parseInt(document.querySelector('.options select').value));
     } else {
+        await clearHeaderSigns();
+        mockDbForSort = [];
+        searchBox.value = '';
         tableNavigation.innerHTML = '';
         tbody.innerHTML = '';
         await startLoading();
@@ -96,7 +104,7 @@ async function populateTable(data, idx = 0, limit = 25) {
 }
 
 document.querySelector('.options select').addEventListener('change', async function () {
-    await populateTable(mockDb, 0, parseInt(this.value));
+    await populateTable(mockDbForSort.length > 0 ? mockDbForSort : mockDb, 0, parseInt(this.value));
     await tableNav(parseInt(this.value));
 });
 
@@ -105,7 +113,7 @@ async function showPage(navButton) {
     const nr_page = parseInt(navButton.textContent);
     const page_size_data = parseInt(document.querySelector('.options select').value);
     const end = page_size_data * nr_page;
-    await populateTable(mockDb, (end - page_size_data), end);
+    await populateTable(mockDbForSort.length > 0 ? mockDbForSort : mockDb, (end - page_size_data), end);
     navButton.classList.add('selected-nav-btn');
     navButton.disabled = true;
 }
@@ -148,16 +156,33 @@ async function sortByID(header) {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "⇓";
         db.sort((a, b) => a.id - b.id);
+        for (let i = 0; i < db.length; i++) {
+            db[i].index = i;
+        }
+        mockDbForSort = [...db];
         await populateTable(db);
+        await cleanSelectedNavBtn();
+        const first = document.querySelector('.nav-btn');
+        first.disabled = true;
     } else if (header.textContent.includes("⇓")) {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "⇑";
         db.sort((a, b) => b.id - a.id);
+        for (let i = 0; i < db.length; i++) {
+            db[i].index = i;
+        }
+        mockDbForSort = [...db];
         await populateTable(db);
+        await cleanSelectedNavBtn();
+        const first = document.querySelector('.nav-btn');
+        first.disabled = true;
     } else {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "−";
         await populateTable(mockDb.length > 0 ? mockDb : database);
+        await cleanSelectedNavBtn();
+        const first = document.querySelector('.nav-btn');
+        first.disabled = true;
     }
 }
 
@@ -168,18 +193,35 @@ async function sortByString(header, field) {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "⇓";
         db.sort((a, b) => a[field].localeCompare(b[field]));
+        for (let i = 0; i < db.length; i++) {
+            db[i].index = i;
+        }
+        mockDbForSort = [...db];
         await populateTable(db);
+        await cleanSelectedNavBtn();
+        const first = document.querySelector('.nav-btn');
+        first.disabled = true;
     }
     else if (header.textContent.includes("⇓")) {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "⇑";
         db.sort((a, b) => b[field].localeCompare(a[field]));
+        for (let i = 0; i < db.length; i++) {
+            db[i].index = i;
+        }
+        mockDbForSort = [...db];
         await populateTable(db);
+        await cleanSelectedNavBtn();
+        const first = document.querySelector('.nav-btn');
+        first.disabled = true;
     }
     else {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "−";
         await populateTable(mockDb.length > 0 ? mockDb : database);
+        await cleanSelectedNavBtn();
+        const first = document.querySelector('.nav-btn');
+        first.disabled = true;
     }
 }
 
@@ -190,18 +232,35 @@ async function sortByAddress(header) {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "⇓";
         db.sort((a, b) => a.address.state.localeCompare(b.address.state));
+        for (let i = 0; i < db.length; i++) {
+            db[i].index = i;
+        }
+        mockDbForSort = [...db];
         await populateTable(db);
+        await cleanSelectedNavBtn();
+        const first = document.querySelector('.nav-btn');
+        first.disabled = true;
     }
     else if (header.textContent.includes("⇓")) {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "⇑";
         db.sort((a, b) => b.address.state.localeCompare(a.address.state));
+        for (let i = 0; i < db.length; i++) {
+            db[i].index = i;
+        }
+        mockDbForSort = [...db];
         await populateTable(db);
+        await cleanSelectedNavBtn();
+        const first = document.querySelector('.nav-btn');
+        first.disabled = true;
     }
     else {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "−";
         await populateTable(mockDb.length > 0 ? mockDb : database);
+        await cleanSelectedNavBtn();
+        const first = document.querySelector('.nav-btn');
+        first.disabled = true;
     }
 }
 
@@ -289,8 +348,6 @@ register.onclick = async function (e) {
     modal.style.display = "none";
 }
 
-const searchBox = document.querySelector('#search-box');
-
 searchBox.addEventListener('change', async function () {
     await clearHeaderSigns();
     const db = database.filter(function (data) {
@@ -299,6 +356,7 @@ searchBox.addEventListener('change', async function () {
         return str.includes(searchBox.value.toLowerCase());
     });
     mockDb = [...db];
+    mockDbForSort = [...mockDb];
     await populateTable(db);
     await tableNav(parseInt(document.querySelector('.options select').value));
 })
