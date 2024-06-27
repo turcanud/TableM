@@ -326,24 +326,23 @@ register.onclick = async function (e) {
         }
     }
 
-    database.push({
+    for (let i = 0; i < database.length; i++) {
+        database[i].index += 1;
+    }
+
+    database.unshift({
         id, firstName, lastName, email, phone,
         "address": { streetAddress, city, state, zip },
-        description, index: database.length
+        description, index: 0
     })
 
-    const row = `
-        <tr ondblclick = "displayInfo(this)">
-            <td>${database.length}</td>
-            <td>${id}</td>
-            <td>${firstName}</td>
-            <td>${lastName}</td>
-            <td>${phone}</td>
-            <td>${email}</td>
-            <td>${state + ' ' + streetAddress}</td>
-          </tr>
-    `;
-    tbody.innerHTML += row;
+    mockDb = [...database];
+    mockDbForSort = [];
+
+    await populateTable(mockDb);
+    await tableNav(parseInt(document.querySelector('.options select').value));
+    await clearHeaderSigns();
+    searchBox.value = '';
     document.body.style.overflow = "auto";
     modal.style.display = "none";
 }
