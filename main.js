@@ -15,7 +15,7 @@ async function fetchData(url) {
 
 async function tableNav(size = 25) {
     tableNavigation.innerHTML = '';
-    const pages = Math.ceil(database.length / size);
+    const pages = Math.ceil(mockDb.length / size);
     for (let i = 0; i < pages; i++) {
         const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i + 1}</button>`;
         tableNavigation.innerHTML += navBtn;
@@ -69,8 +69,9 @@ document.querySelector('#data-set-size-selector').addEventListener('change', asy
     for (let i = 0; i < database.length; i++) {
         database[i].index = i;
     }
+    mockDb = [...database];
     await endLoading();
-    await populateTable(database);
+    await populateTable(mockDb);
     await tableNav();
 })();
 
@@ -95,7 +96,7 @@ async function populateTable(data, idx = 0, limit = 25) {
 }
 
 document.querySelector('.options select').addEventListener('change', async function () {
-    await populateTable(database, 0, parseInt(this.value));
+    await populateTable(mockDb, 0, parseInt(this.value));
     await tableNav(parseInt(this.value));
 });
 
@@ -104,7 +105,7 @@ async function showPage(navButton) {
     const nr_page = parseInt(navButton.textContent);
     const page_size_data = parseInt(document.querySelector('.options select').value);
     const end = page_size_data * nr_page;
-    await populateTable(database, (end - page_size_data), end);
+    await populateTable(mockDb, (end - page_size_data), end);
     navButton.classList.add('selected-nav-btn');
     navButton.disabled = true;
 }
@@ -299,4 +300,5 @@ searchBox.addEventListener('change', async function () {
     });
     mockDb = [...db];
     await populateTable(db);
+    await tableNav(parseInt(document.querySelector('.options select').value));
 })
