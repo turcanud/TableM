@@ -17,9 +17,11 @@ async function tableNav(size = 25) {
     tableNavigation.innerHTML = '';
     const pages = Math.ceil(database.length / size);
     for (let i = 0; i < pages; i++) {
-        const navBtn = `<button type="button" class="nav-btn">${i + 1}</button>`;
+        const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i + 1}</button>`;
         tableNavigation.innerHTML += navBtn;
     }
+    const first = document.querySelector('.nav-btn');
+    first.disabled = true;
 }
 
 const loader = document.querySelector('.loader');
@@ -33,7 +35,7 @@ async function endLoading() {
 
 document.querySelector('#data-set-size-selector').addEventListener('change', async function () {
     const url_small = 'http://www.filltext.com/?rows=32&id=%7Bnumber%7C1000%7D&firstName=%7BfirstName%7D&lastName=%7BlastName%7D&email=%7Bemail%7D&phone=%7Bphone%7C(xxx)xxx-xx-xx%7D&address=%7BaddressObject%7D&description=%7Blorem%7C32%7D';
-    const url_large = 'http://www.filltext.com/?rows=1000&id=%7Bnumber%7C1000%7D&firstName=%7BfirstName%7D&delay=3&lastName=%7BlastName%7D&email=%7Bemail%7D&phone=%7Bphone%7C(xxx)xxx-xx-xx%7D&address=%7BaddressObject%7D&description=%7Blorem%7C32%7D';
+    const url_large = 'http://www.filltext.com/?rows=1000&id=%7Bnumber%7C1000%7D&firstName=%7BfirstName%7D&lastName=%7BlastName%7D&email=%7Bemail%7D&phone=%7Bphone%7C(xxx)xxx-xx-xx%7D&address=%7BaddressObject%7D&description=%7Blorem%7C32%7D';
     if (this.value == "large") {
         tableNavigation.innerHTML = '';
         tbody.innerHTML = '';
@@ -44,8 +46,8 @@ document.querySelector('#data-set-size-selector').addEventListener('change', asy
         }
         mockDb = [...database];
         await endLoading();
-        await populateTable(database);
-        await tableNav();
+        await populateTable(database, 0, parseInt(document.querySelector('.options select').value));
+        await tableNav(parseInt(document.querySelector('.options select').value));
     } else {
         tableNavigation.innerHTML = '';
         tbody.innerHTML = '';
@@ -56,8 +58,8 @@ document.querySelector('#data-set-size-selector').addEventListener('change', asy
         }
         mockDb = [...database];
         await endLoading();
-        await populateTable(database);
-        await tableNav();
+        await populateTable(database, 0, parseInt(document.querySelector('.options select').value));
+        await tableNav(parseInt(document.querySelector('.options select').value));
     }
 });
 
@@ -97,7 +99,23 @@ document.querySelector('.options select').addEventListener('change', async funct
     await tableNav(parseInt(this.value));
 });
 
+async function showPage(navButton) {
+    await cleanSelectedNavBtn();
+    const nr_page = parseInt(navButton.textContent);
+    const page_size_data = parseInt(document.querySelector('.options select').value);
+    const end = page_size_data * nr_page;
+    await populateTable(database, (end - page_size_data), end);
+    navButton.classList.add('selected-nav-btn');
+    navButton.disabled = true;
+}
 
+async function cleanSelectedNavBtn() {
+    const allNavBtns = document.querySelectorAll('.nav-btn');
+    for (let i = 0; i < allNavBtns.length; i++) {
+        allNavBtns[i].classList.remove('selected-nav-btn');
+        allNavBtns[i].disabled = false;
+    }
+}
 
 async function displayInfo(row) {
     const cells = row.getElementsByTagName('td');

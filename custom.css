@@ -142,6 +142,19 @@ td {
   height: 50px;
   width: 50px;
   border-radius: 50%;
+  cursor: pointer;
+}
+
+.nav-btn:hover {
+  background-color: #1e1e1e;
+}
+
+.nav-btn:disabled{
+  background-color: #aaa;
+}
+
+.selected-nav-btn {
+  background-color: #005f6b;
 }
 
 .user-selected-info {
