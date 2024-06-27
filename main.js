@@ -104,7 +104,7 @@ async function populateTable(data, idx = 0, limit = 25) {
 }
 
 document.querySelector('.options select').addEventListener('change', async function () {
-    await populateTable(mockDbForSort.length > 0 ? mockDbForSort : mockDb, 0, parseInt(this.value));
+    await populateTable(mockDbForSort.length > 0 ? [...mockDbForSort] : [...mockDb], 0, parseInt(this.value));
     await tableNav(parseInt(this.value));
 });
 
@@ -113,7 +113,7 @@ async function showPage(navButton) {
     const nr_page = parseInt(navButton.textContent);
     const page_size_data = parseInt(document.querySelector('.options select').value);
     const end = page_size_data * nr_page;
-    await populateTable(mockDbForSort.length > 0 ? mockDbForSort : mockDb, (end - page_size_data), end);
+    await populateTable(mockDbForSort.length > 0 ? [...mockDbForSort] : [...mockDb], (end - page_size_data), end);
     navButton.classList.add('selected-nav-btn');
     navButton.disabled = true;
 }
