@@ -298,6 +298,28 @@ window.onclick = function (event) {
     }
 }
 
+const inputs = document.querySelectorAll('form input');
+for (let i = 0; i < inputs.length; i++) {
+    inputs[i].addEventListener('input', function () {
+        const firstName = document.querySelector('#firstName').value.trim();
+        const lastName = document.querySelector('#lastName').value.trim();
+        const email = document.querySelector('#email').value.trim();
+        const phone = document.querySelector('#phone').value.trim();
+        const streetAddress = document.querySelector('#streetAddress').value.trim();
+        const city = document.querySelector('#city').value.trim();
+        const state = document.querySelector('#state').value.trim();
+        const zip = document.querySelector('#zip').value.trim();
+        const description = document.querySelector('#description').value.trim();
+
+        if (firstName !== '' && lastName !== '' && email !== '' && phone !== '' && streetAddress !== '' && city !== '' && state !== '' && zip !== '' && description !== '') {
+            document.querySelector('form button').disabled = false;
+        } else {
+            document.querySelector('form button').disabled = true;
+        }
+    });
+}
+
+
 const register = document.querySelector('.modal-content .btn');
 register.onclick = async function (e) {
     e.preventDefault();

@@ -149,7 +149,7 @@ td {
   background-color: #1e1e1e;
 }
 
-.nav-btn:disabled{
+.btn:disabled, .nav-btn:disabled{
   background-color: #aaa;
 }
 
