@@ -107,7 +107,7 @@ async function tableNav(size = 25) {
     const first = document.querySelector('.nav-btn');
     const btnForm = first.getBoundingClientRect();
     first.disabled = true;
-    if (btnForm.width !== 50) {
+    if (btnForm.width !== 50 || pages > 15) {
         tableNavigation.innerHTML = '';
         for (let i = 0; i < 8; i++) {
             const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i + 1}</button>`;
@@ -130,11 +130,6 @@ async function showPage(navButton) {
     const total_pages = Math.ceil(mockDb.length / page_size_data);
     const end = page_size_data * nr_page;
     await populateTable(mockDbForSort.length > 0 ? [...mockDbForSort] : [...mockDb], (end - page_size_data), end);
-
-    // 1 2 3 4 5 6 7 (8) 9 10 11 12 ... 18 19 20
-    // 1 2 3 ... 5 6 7 8 (9) 10 11 12 13 ... 18 19 20
-    // 1 2 3 ... 6 7 8 9 (10) 11 12 13 14 ... 18 19 20
-    // first 3 |...| 4left<-selected->4right |...| last 3 |
 
     if (total_pages > 15 && nr_page > 7 && nr_page < total_pages - 7) {
         tableNavigation.innerHTML = '';
