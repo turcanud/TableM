@@ -15,17 +15,6 @@ async function fetchData(url) {
     return data;
 }
 
-async function tableNav(size = 25) {
-    tableNavigation.innerHTML = '';
-    const pages = Math.ceil(mockDb.length / size);
-    for (let i = 0; i < pages; i++) {
-        const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i + 1}</button>`;
-        tableNavigation.innerHTML += navBtn;
-    }
-    const first = document.querySelector('.nav-btn');
-    first.disabled = true;
-}
-
 const loader = document.querySelector('.loader');
 async function startLoading() {
     loader.classList.remove('hidden');
@@ -108,14 +97,45 @@ document.querySelector('.options select').addEventListener('change', async funct
     await tableNav(parseInt(this.value));
 });
 
+async function tableNav(size = 25) {
+    tableNavigation.innerHTML = '';
+    const pages = Math.ceil(mockDb.length / size);
+    for (let i = 0; i < pages; i++) {
+        const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i + 1}</button>`;
+        tableNavigation.innerHTML += navBtn;
+    }
+    const first = document.querySelector('.nav-btn');
+    first.disabled = true;
+    // const btnForm = first.getBoundingClientRect();
+    // if (btnForm.width !== 50) {
+    //     tableNavigation.innerHTML = '';
+    //     for (let i = 0; i < 8; i++) {
+    //         const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i + 1}</button>`;
+    //         tableNavigation.innerHTML += navBtn;
+    //     }
+    //     tableNavigation.innerHTML += `<button type="button" class="nav-btn">. . .</button>`;
+    //     for (let i = pages - 8; i < pages; i++) {
+    //         const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i + 1}</button>`;
+    //         tableNavigation.innerHTML += navBtn;
+    //     }
+    //     const first = document.querySelector('.nav-btn');
+    //     first.disabled = true;
+    // }
+}
+
 async function showPage(navButton) {
     await cleanSelectedNavBtn();
     const nr_page = parseInt(navButton.textContent);
     const page_size_data = parseInt(document.querySelector('.options select').value);
+    const total_pages = Math.ceil(mockDb.length / page_size_data);
     const end = page_size_data * nr_page;
     await populateTable(mockDbForSort.length > 0 ? [...mockDbForSort] : [...mockDb], (end - page_size_data), end);
     navButton.classList.add('selected-nav-btn');
     navButton.disabled = true;
+    // 1 2 3 4 5 6 7 (8) 9 10 11 12 ... 18 19 20
+    // 1 2 3 ... 5 6 7 8 (9) 10 11 12 13 ... 18 19 20
+    // 1 2 3 ... 6 7 8 9 (10) 11 12 13 14 ... 18 19 20
+    // first 3 |...| 4left<-selected->4right |...| last 3 |
 }
 
 async function cleanSelectedNavBtn() {
@@ -151,7 +171,7 @@ async function displayInfo(row) {
 }
 
 async function sortByID(header) {
-    const db = mockDb.length > 0 ? [...mockDb] : [...database];
+    const db = [...mockDb];
     if (header.textContent.includes("−")) {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "⇓";
@@ -160,7 +180,7 @@ async function sortByID(header) {
             db[i].index = i;
         }
         mockDbForSort = [...db];
-        await populateTable(db);
+        await populateTable(mockDbForSort);
         await cleanSelectedNavBtn();
         const first = document.querySelector('.nav-btn');
         first.disabled = true;
@@ -172,14 +192,14 @@ async function sortByID(header) {
             db[i].index = i;
         }
         mockDbForSort = [...db];
-        await populateTable(db);
+        await populateTable(mockDbForSort);
         await cleanSelectedNavBtn();
         const first = document.querySelector('.nav-btn');
         first.disabled = true;
     } else {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "−";
-        await populateTable(mockDb.length > 0 ? mockDb : database);
+        await populateTable(mockDb);
         await cleanSelectedNavBtn();
         const first = document.querySelector('.nav-btn');
         first.disabled = true;
@@ -187,7 +207,7 @@ async function sortByID(header) {
 }
 
 async function sortByString(header, field) {
-    const db = mockDb.length > 0 ? [...mockDb] : [...database];
+    const db = [...mockDb];
 
     if (header.textContent.includes("−")) {
         await clearHeaderSigns();
@@ -197,7 +217,7 @@ async function sortByString(header, field) {
             db[i].index = i;
         }
         mockDbForSort = [...db];
-        await populateTable(db);
+        await populateTable(mockDbForSort);
         await cleanSelectedNavBtn();
         const first = document.querySelector('.nav-btn');
         first.disabled = true;
@@ -210,7 +230,7 @@ async function sortByString(header, field) {
             db[i].index = i;
         }
         mockDbForSort = [...db];
-        await populateTable(db);
+        await populateTable(mockDbForSort);
         await cleanSelectedNavBtn();
         const first = document.querySelector('.nav-btn');
         first.disabled = true;
@@ -218,7 +238,7 @@ async function sortByString(header, field) {
     else {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "−";
-        await populateTable(mockDb.length > 0 ? mockDb : database);
+        await populateTable(mockDb);
         await cleanSelectedNavBtn();
         const first = document.querySelector('.nav-btn');
         first.disabled = true;
@@ -226,7 +246,7 @@ async function sortByString(header, field) {
 }
 
 async function sortByAddress(header) {
-    const db = mockDb.length > 0 ? [...mockDb] : [...database];
+    const db = [...mockDb];
 
     if (header.textContent.includes("−")) {
         await clearHeaderSigns();
@@ -257,7 +277,7 @@ async function sortByAddress(header) {
     else {
         await clearHeaderSigns();
         header.textContent = header.textContent.slice(0, -1) + "−";
-        await populateTable(mockDb.length > 0 ? mockDb : database);
+        await populateTable(mockDb);
         await cleanSelectedNavBtn();
         const first = document.querySelector('.nav-btn');
         first.disabled = true;
@@ -280,14 +300,11 @@ async function scrollToElement() {
 }
 
 const modal = document.getElementById("myModal");
-const addBtn = document.querySelector('.options .btn');
-const span = document.getElementsByClassName("close")[0];
-
-addBtn.onclick = function () {
+document.querySelector('.options .btn').onclick = function () {
     document.body.style.overflow = "hidden";
     modal.style.display = "block";
 }
-span.onclick = function () {
+document.getElementsByClassName("close")[0].onclick = function () {
     document.body.style.overflow = "auto";
     modal.style.display = "none";
 }
@@ -332,6 +349,7 @@ register.onclick = async function (e) {
     const state = document.querySelector('#state').value;
     const zip = document.querySelector('#zip').value;
     const description = document.querySelector('#description').value;
+
     let id = 0;
 
     for (let i = 0; i < Infinity; i++) {
@@ -361,7 +379,7 @@ register.onclick = async function (e) {
     mockDb = [...database];
     mockDbForSort = [];
 
-    await populateTable(mockDb);
+    await populateTable(database);
     await tableNav(parseInt(document.querySelector('.options select').value));
     await clearHeaderSigns();
     searchBox.value = '';
@@ -376,8 +394,8 @@ searchBox.addEventListener('change', async function () {
         const str = dataString.toLowerCase();
         return str.includes(searchBox.value.toLowerCase());
     });
-    mockDb = [...db];
-    mockDbForSort = [...mockDb];
     await populateTable(db);
     await tableNav(parseInt(document.querySelector('.options select').value));
+    mockDb = [...db];
+    mockDbForSort = [...mockDb];
 })
