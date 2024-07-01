@@ -105,22 +105,22 @@ async function tableNav(size = 25) {
         tableNavigation.innerHTML += navBtn;
     }
     const first = document.querySelector('.nav-btn');
+    const btnForm = first.getBoundingClientRect();
     first.disabled = true;
-    // const btnForm = first.getBoundingClientRect();
-    // if (btnForm.width !== 50) {
-    //     tableNavigation.innerHTML = '';
-    //     for (let i = 0; i < 8; i++) {
-    //         const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i + 1}</button>`;
-    //         tableNavigation.innerHTML += navBtn;
-    //     }
-    //     tableNavigation.innerHTML += `<button type="button" class="nav-btn">. . .</button>`;
-    //     for (let i = pages - 8; i < pages; i++) {
-    //         const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i + 1}</button>`;
-    //         tableNavigation.innerHTML += navBtn;
-    //     }
-    //     const first = document.querySelector('.nav-btn');
-    //     first.disabled = true;
-    // }
+    if (btnForm.width !== 50) {
+        tableNavigation.innerHTML = '';
+        for (let i = 0; i < 8; i++) {
+            const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i + 1}</button>`;
+            tableNavigation.innerHTML += navBtn;
+        }
+        tableNavigation.innerHTML += `<button type="button" class="nav-btn">. . .</button>`;
+        for (let i = pages - 8; i <= pages; i++) {
+            const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i}</button>`;
+            tableNavigation.innerHTML += navBtn;
+        }
+        const first = document.querySelector('.nav-btn');
+        first.disabled = true;
+    }
 }
 
 async function showPage(navButton) {
@@ -130,12 +130,77 @@ async function showPage(navButton) {
     const total_pages = Math.ceil(mockDb.length / page_size_data);
     const end = page_size_data * nr_page;
     await populateTable(mockDbForSort.length > 0 ? [...mockDbForSort] : [...mockDb], (end - page_size_data), end);
-    navButton.classList.add('selected-nav-btn');
-    navButton.disabled = true;
+
     // 1 2 3 4 5 6 7 (8) 9 10 11 12 ... 18 19 20
     // 1 2 3 ... 5 6 7 8 (9) 10 11 12 13 ... 18 19 20
     // 1 2 3 ... 6 7 8 9 (10) 11 12 13 14 ... 18 19 20
     // first 3 |...| 4left<-selected->4right |...| last 3 |
+
+    if (total_pages > 15 && nr_page > 7 && nr_page < total_pages - 7) {
+        tableNavigation.innerHTML = '';
+        for (let i = 1; i <= 3; i++) {
+            if (nr_page === i) {
+                const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn selected-nav-btn" disabled>${i}</button>`;
+                tableNavigation.innerHTML += navBtn;
+            } else {
+                const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i}</button>`;
+                tableNavigation.innerHTML += navBtn;
+            }
+        }
+        tableNavigation.innerHTML += `<button type="button" class="nav-btn">. . .</button>`;
+        for (let i = nr_page - 2; i <= nr_page + 2; i++) {
+            if (nr_page === i) {
+                const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn selected-nav-btn" disabled>${i}</button>`;
+                tableNavigation.innerHTML += navBtn;
+            } else {
+                const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i}</button>`;
+                tableNavigation.innerHTML += navBtn;
+            }
+        }
+        tableNavigation.innerHTML += `<button type="button" class="nav-btn">. . .</button>`;
+        for (let i = total_pages - 3; i <= total_pages; i++) {
+            if (nr_page === i) {
+                const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn selected-nav-btn" disabled>${i}</button>`;
+                tableNavigation.innerHTML += navBtn;
+            } else {
+                const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i}</button>`;
+                tableNavigation.innerHTML += navBtn;
+            }
+        }
+
+    } else if (total_pages > 15 && (nr_page < 8 || nr_page > total_pages - 8)) {
+        tableNavigation.innerHTML = '';
+        for (let i = 1; i <= 8; i++) {
+            if (nr_page === i) {
+                const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn selected-nav-btn" disabled>${i}</button>`;
+                tableNavigation.innerHTML += navBtn;
+            } else {
+                const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i}</button>`;
+                tableNavigation.innerHTML += navBtn;
+            }
+        }
+        tableNavigation.innerHTML += `<button type="button" class="nav-btn">. . .</button>`;
+        for (let i = total_pages - 8; i <= total_pages; i++) {
+            if (nr_page === i) {
+                const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn selected-nav-btn" disabled>${i}</button>`;
+                tableNavigation.innerHTML += navBtn;
+            } else {
+                const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i}</button>`;
+                tableNavigation.innerHTML += navBtn;
+            }
+        }
+    } else {
+        tableNavigation.innerHTML = '';
+        for (let i = 1; i <= total_pages; i++) {
+            if (nr_page === i) {
+                const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn selected-nav-btn" disabled>${i}</button>`;
+                tableNavigation.innerHTML += navBtn;
+            } else {
+                const navBtn = `<button type="button" onclick="showPage(this)" class="nav-btn">${i}</button>`;
+                tableNavigation.innerHTML += navBtn;
+            }
+        }
+    }
 }
 
 async function cleanSelectedNavBtn() {
@@ -394,8 +459,8 @@ searchBox.addEventListener('change', async function () {
         const str = dataString.toLowerCase();
         return str.includes(searchBox.value.toLowerCase());
     });
-    await populateTable(db);
-    await tableNav(parseInt(document.querySelector('.options select').value));
     mockDb = [...db];
     mockDbForSort = [...mockDb];
+    await populateTable(db);
+    await tableNav(parseInt(document.querySelector('.options select').value));
 })
